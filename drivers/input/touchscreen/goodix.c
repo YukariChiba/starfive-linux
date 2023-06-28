@@ -68,6 +68,13 @@
 #define ACPI_GPIO_SUPPORT
 #endif
 
+u8 cfg_gt911[] = {
+	#include "gt911_Config_pinetab.cfg"
+};
+#define CFG_GROUP_LEN(p_cfg_grp)  (sizeof(p_cfg_grp) / sizeof(p_cfg_grp[0]))
+
+
+
 struct goodix_ts_data;
 
 enum goodix_irq_pin_access_method {
@@ -1238,9 +1245,12 @@ reset:
 		if (!ts->cfg_name)
 			return -ENOMEM;
 
-		error = request_firmware_nowait(THIS_MODULE, true, ts->cfg_name,
+		/*error = request_firmware_nowait(THIS_MODULE, true, ts->cfg_name,
 						&client->dev, GFP_KERNEL, ts,
-						goodix_config_cb);
+						goodix_config_cb);*/
+
+		error = goodix_send_cfg(ts, cfg_gt911, CFG_GROUP_LEN(cfg_gt911));
+		goodix_configure_dev(ts);
 		if (error) {
 			dev_err(&client->dev,
 				"Failed to invoke firmware loader: %d\n",
