@@ -6,7 +6,7 @@
 
 /dts-v1/;
 #include "jh7110-visionfive-v2.dtsi"
-#include "codecs/sf_hdmi.dtsi"
+//#include "codecs/sf_hdmi.dtsi"
 
 / {
 	model = "StarFive VisionFive V2";

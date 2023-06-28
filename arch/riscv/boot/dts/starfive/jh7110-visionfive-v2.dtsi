@@ -8,11 +8,11 @@
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/leds/common.h>
 #include <dt-bindings/pinctrl/starfive,jh7110-pinfunc.h>
+#include <dt-bindings/input/linux-event-codes.h>
 #include "jh7110.dtsi"
-#include "codecs/sf_pwmdac.dtsi"
 
 / {
-	model = "StarFive VisionFive V2";
+	model = "StarFive VisionFive V2 Pinetable";
 	compatible = "starfive,visionfive-v2", "starfive,jh7110";
 
 	aliases {
@@ -88,6 +88,82 @@
 			label = "ack";
 		};
 	};
+
+	vcc5v: vcc5v{
+		compatible = "regulator-fixed";
+		enable-active-high;
+		gpio = <&gpio 39 0>;
+		regulator-boot-on;
+		regulator-always-on;
+		regulator-name = "vcc_5v";
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+	};
+
+	wifi_3v3: wifi_3v3{
+		compatible = "regulator-fixed";
+		enable-active-low;
+		gpio = <&gpio 46 1>;
+		regulator-boot-on;
+		regulator-always-on;
+		regulator-name = "wifi_3v3";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+	};
+
+	rfkill_bt {
+		compatible = "rfkill-gpio";
+		label = "BlueTooth";
+		radio-type = "bluetooth";
+		shutdown-gpios = <&gpio 54 GPIO_ACTIVE_HIGH>;
+	};
+
+	rfkill_wifi {
+		compatible = "rfkill-gpio";
+		label = "Wi-Fi";
+		radio-type = "wlan";
+		shutdown-gpios = <&gpio 42 GPIO_ACTIVE_HIGH>;
+		reset-gpios = <&gpio 47 GPIO_ACTIVE_HIGH>;
+	};
+
+	gpio_keys: gpio-keys {
+		status = "okay";
+		compatible = "gpio-keys";
+		autorepeat;
+
+		vol-up-key {
+			label = "vol up key";
+			debounce-interval = <10>;
+			linux,input-type = <EV_KEY>;
+			linux,code = <KEY_VOLUMEUP>;
+			gpios = <&gpio 49 GPIO_ACTIVE_LOW>;
+		};
+
+		vol-down-key {
+			label = "vol down key";
+			debounce-interval = <10>;
+			linux,input-type = <EV_KEY>;
+			linux,code = <KEY_VOLUMEDOWN>;
+			gpios = <&gpio 51 GPIO_ACTIVE_LOW>;
+		};
+
+		hall-key {
+			label = "hall test key";
+			debounce-interval = <10>;
+			linux,input-type = <EV_KEY>;
+			linux,code = <KEY_1>;
+			gpios = <&gpio 40 GPIO_ACTIVE_LOW>;
+		};
+	};
+
+	bat: battery {
+		compatible = "simple-battery";
+		charge-full-design-microamp-hours = <9800000>;
+		voltage-max-design-microvolt = <4350000>;
+		voltage-min-design-microvolt = <3000000>;
+	};
+
+
 };
 
 &gpio {
@@ -308,13 +384,20 @@
 	};
 
 	usb_pins: usb-pins {
-		drive-vbus-pin {
-			starfive,pins = <PAD_GPIO25>;
-			starfive,pinmux = <PAD_GPIO25_FUNC_SEL 0>;
-			starfive,pin-ioconfig = <IO(GPIO_IE(1))>;
-			starfive,pin-gpio-dout = <GPO_USB0_DRIVE_VBUS_IO>;
-			starfive,pin-gpio-doen = <OEN_LOW>;
-		};
+		// drive-vbus-pin {
+		// 	starfive,pins = <PAD_GPIO25>;
+		// 	starfive,pinmux = <PAD_GPIO25_FUNC_SEL 0>;
+		// 	starfive,pin-ioconfig = <IO(GPIO_IE(1))>;
+		// 	starfive,pin-gpio-dout = <GPO_USB0_DRIVE_VBUS_IO>;
+		// 	starfive,pin-gpio-doen = <OEN_LOW>;
+		// };
+        overcurrent-pin {
+            starfive,pins = <PAD_GPIO43>;
+            starfive,pinmux = <PAD_GPIO43_FUNC_SEL 0>;
+            starfive,pin-ioconfig = <IO(GPIO_IE(1))>;
+            starfive,pin-gpio-din = <GPI_USB0_OVERCURRENT_N_IO>;
+            starfive,pin-gpio-doen = <OEN_HIGH>;
+        };
 	};
 
 	i2srx_pins: i2srx-pins {
@@ -354,6 +437,24 @@
 			starfive,pin-gpio-doen = <OEN_LOW>;
 		};
 	};
+
+	rfkill_wifi_pins: rfkill_wifi_pins {
+		rfkill_wifi_disn {
+			starfive,pins = <PAD_GPIO42>;
+			starfive,pinmux = <PAD_GPIO42_FUNC_SEL 0>;
+			starfive,pin-ioconfig = <IO(GPIO_IE(1))>;
+			starfive,pin-gpio-doen = <OEN_HIGH>;			
+		};
+	};
+
+	rfkill_bt_pins: rfkill_bt_pins {
+		rfkill_bt_disn {
+			starfive,pins = <PAD_GPIO54>;
+			starfive,pinmux = <PAD_GPIO54_FUNC_SEL 0>;
+			starfive,pin-ioconfig = <IO(GPIO_IE(1))>;
+			starfive,pin-gpio-doen = <OEN_HIGH>;
+		};
+	};
 };
 
 &uart0 {
@@ -376,6 +477,31 @@
 	status = "okay";
 };
 
+/* i2s + es8316 */
+&sound7 {
+	/* i2s + es8316 */
+	simple-audio-card,dai-link@0 {
+		reg = <0>;
+		format = "i2s";
+		bitclock-master = <&sndes8316>;
+		frame-master = <&sndes8316>;
+		mclk-fs = <256>;
+		status = "okay";
+
+		sndi2srx1: cpu0 {
+			sound-dai = <&i2srx_3ch>;
+		};
+
+		sndi2stx1: cpu1 {
+			sound-dai = <&i2stx_4ch1>;
+		};
+
+		sndes8316: codec {
+			sound-dai = <&es8316>;
+		};
+	};
+};
+
 &i2c0 {
 	clock-frequency = <100000>;
 	i2c-sda-hold-time-ns = <300>;
@@ -385,6 +511,18 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2c0_pins>;
 	status = "okay";
+
+	es8316: codec@11 {
+		compatible = "everest,es8316";
+		reg = <0x11>;
+		clocks = <&es8316_mclk>;
+		clock-names = "mclk";
+		#sound-dai-cells = <0>;
+
+		papower-gpio = <&gpio 50 0>;
+		hp-det-gpio = <&gpio 36 0>;
+	};
+
 };
 
 &i2c2 {
@@ -414,8 +552,9 @@
 	panel_radxa@19 {
 		compatible ="starfive_jadard";
 		reg = <0x19>;
-		reset-gpio = <&gpio 23 0>;
-		enable-gpio = <&gpio 22 0>;
+		//reset-gpio = <&gpio 23 0>;
+		blen-gpio = <&gpio 45 0>;
+		enable-gpio = <&gpio 37 0>;
 
 		port {
 			panel_out1: endpoint {
@@ -484,6 +623,74 @@
 			};
 		};
 	};
+
+	// sc89890: sc89890@6a{
+	// 	compatible = "sc,sc89890";
+	// 	reg = <0x6a>;
+
+	// 	// interrupt-parent = <&gpio>;
+	// 	// interrupts = <RK_PD5 IRQ_TYPE_EDGE_FALLING>;
+	// 	irq-gpios = <&gpio 48 GPIO_ACTIVE_LOW>;
+
+	// 	sc,battery-regulation-voltage = <4200000>;
+	// 	sc,charge-current = <1000000>;
+	// 	// sc,termination-current = <50000>;
+	// 	sc,termination-current = <500>;
+	// 	sc,precharge-current = <128000>;
+	// 	sc,minimum-sys-voltage = <3000000>;
+	// 	sc,boost-voltage = <5000000>;
+	// 	sc,boost-max-current = <1600000>;
+
+	// 	// sc,thermal-regulation-threshold = <4000000>;
+	// 	// sc,ibatcomp-clamp-microvolt = <1000000>;
+	// 	sc,ibatcomp-micro-ohms = <10>;
+
+	// 	sc89890h_otg_vbus: sc89890h_otg_vbus {
+    //         regulator-name = "sc89890h_otg_vbus";
+    //     };
+	// };
+
+	sc89890h: sc89890@6a{
+		compatible = "sc,sc89890h";
+		reg = <0x6A>;
+
+		// nterrupt-parent = <&tlmm>;
+		// interrupts = <65 0>;
+		// pinctrl-names = "default";
+		// pinctrl-0 = <&sc89890h_int_default>;
+		irq-gpios = <&gpio 48 GPIO_ACTIVE_LOW>;
+
+		charger_name = "primary_chg";
+		eint_name = "chr_stat";
+		/*sc,sc8989x,charge-detect-enable*/
+		sc,sc89890h,usb-vlim = <4500>;
+		sc,sc89890h,usb-ilim = <2000>;
+		sc,sc89890h,usb-vreg = <4200>;
+		sc,sc89890h,usb-ichg = <2000>;
+		sc,sc89890h,precharge-current = <180>;
+		sc,sc89890h,termination-current = <180>;
+		sc,sc89890h,boost-voltage = <5000>;
+		sc,sc89890h,boost-current = <1200>;
+		sc,sc89890h,charge-current = <1500>;
+	};
+
+    cw2015@62 {
+        status = "okay";
+        compatible = "cellwise,cw2015";
+        reg = <0x62>;
+        cellwise,battery-profile = /bits/ 8
+				<0x17 0x67 0x63 0x64 0x63 0x62 0x61 0x5E
+                0x59 0x61 0x55 0x57 0x60 0x50 0x43 0x3C
+                0x33 0x2D 0x27 0x24 0x26 0x2D 0x39 0x47
+                0x44 0x11 0x0E 0x15 0x20 0x41 0x48 0x55
+                0x59 0x5B 0x60 0x60 0x3F 0x19 0x6A 0x4A
+                0x0B 0x1B 0x2D 0x57 0x8B 0x93 0x96 0x13
+                0x2E 0x56 0xA3 0xCA 0x80 0x6A 0x99 0xCB
+                0x2F 0x00 0x64 0xA5 0xB5 0x11 0xF0 0x31>;
+        cellwise,monitor-interval-ms = <5000>;
+		monitored-battery = <&bat>;
+        power-supplies = <&sc89890h>;
+    };  
 };
 
 &i2c6 {
@@ -496,27 +703,74 @@
 	pinctrl-0 = <&i2c6_pins>;
 	status = "okay";
 
-	imx219: imx219@10 {
-		compatible = "sony,imx219";
-		reg = <0x10>;
+	// imx219: imx219@10 {
+	// 	status = "disabled";
+	// 	compatible = "sony,imx219";
+	// 	reg = <0x10>;
+	// 	clocks = <&clk_ext_camera>;
+	// 	clock-names = "xclk";
+	// 	//reset-gpio = <&gpio 18 0>;
+	// 	//DOVDD-supply = <&v2v8>;
+	// 	pinctrl-names = "default";
+	// 	pinctrl-0 = <&csi_pins>;
+	// 	rotation = <0>;
+	// 	orientation = <1>; //CAMERA_ORIENTATION_BACK
+
+	// 	port {
+	// 		/* CSI2 bus endpoint */
+	// 		imx219_to_csi2rx0: endpoint {
+	// 			remote-endpoint = <&csi2rx0_from_imx219>;
+	// 			bus-type = <4>;      /* MIPI CSI-2 D-PHY */
+	// 			clock-lanes = <4>;
+	// 			data-lanes = <0 1>;
+	// 			lane-polarities = <0 0 0>;
+	// 			link-frequencies = /bits/ 64 <456000000>;
+	// 		};
+	// 	};
+	// };
+
+	ov5640: ov5640@3c {
+		status = "okay";
+		compatible = "ovti,ov5640";
+		reg = <0x3c>;
 		clocks = <&clk_ext_camera>;
 		clock-names = "xclk";
-		//reset-gpio = <&gpio 18 0>;
+		reset-gpios = <&gpio 34 1>;
+		powerdown-gpios = <&gpio 22 1>;
+		sw-gpios = <&gpio 53 GPIO_ACTIVE_HIGH>;
 		//DOVDD-supply = <&v2v8>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&csi_pins>;
+		// pinctrl-names = "default";
+		// pinctrl-0 = <&csi_pins>;
 		rotation = <0>;
 		orientation = <1>; //CAMERA_ORIENTATION_BACK
 
 		port {
 			/* CSI2 bus endpoint */
-			imx219_to_csi2rx0: endpoint {
-				remote-endpoint = <&csi2rx0_from_imx219>;
+			ov5640_to_csi2rx: endpoint {
+				remote-endpoint = <&csi2rx_from_ov5640>;
 				bus-type = <4>;      /* MIPI CSI-2 D-PHY */
-				clock-lanes = <4>;
-				data-lanes = <0 1>;
+				data-lanes = <2 1>;
 				lane-polarities = <0 0 0>;
 				link-frequencies = /bits/ 64 <456000000>;
+			};
+		};
+	};
+
+	gc02m2: gc02m2@37 {
+		status = "disabled";
+		compatible = "galaxycore,gc02m2";
+		reg = <0x37>;
+		clocks = <&clk_ext_camera>;
+		clock-names = "xvclk";
+		reset-gpio = <&gpio 33 GPIO_ACTIVE_HIGH>;
+		pwdn-gpio = <&gpio 25 GPIO_ACTIVE_LOW>;
+
+		port {
+			gc02m2_to_csi2rx0: endpoint {
+				remote-endpoint = <&csi2rx0_from_gc02m2>;
+				bus-type = <4>;      /* MIPI CSI-2 D-PHY */
+				data-lanes = <1>;
+				link-frequencies = /bits/ 64 <336000000>;
 			};
 		};
 	};
@@ -527,8 +781,8 @@
 	card-detect-delay = <300>;
 	bus-width = <8>;
 	cap-mmc-highspeed;
-	mmc-ddr-1_8v;
-	mmc-hs200-1_8v;
+	// mmc-ddr-1_8v;
+	// mmc-hs200-1_8v;
 	non-removable;
 	cap-mmc-hw-reset;
 	post-power-on-delay-ms = <200>;
@@ -561,12 +815,32 @@
 			#size-cells = <0>;
 
 			/* CSI2 bus endpoint */
-			csi2rx0_from_imx219: endpoint@0 {
+			// csi2rx0_from_imx219: endpoint@0 {
+			// 	reg = <0>;
+			// 	remote-endpoint = <&imx219_to_csi2rx0>;
+			// 	bus-type = <4>;      /* MIPI CSI-2 D-PHY */
+			// 	clock-lanes = <4>;
+			// 	data-lanes = <0 1>;
+			// 	lane-polarities = <0 0 0>;
+			// 	status = "disabled";
+			// };
+
+			csi2rx_from_ov5640: endpoint@0 {
 				reg = <0>;
-				remote-endpoint = <&imx219_to_csi2rx0>;
+				remote-endpoint = <&ov5640_to_csi2rx>;
 				bus-type = <4>;      /* MIPI CSI-2 D-PHY */
-				clock-lanes = <4>;
-				data-lanes = <0 1>;
+				clock-lanes = <0>;
+				data-lanes = <2 1>;
+				lane-polarities = <0 0 0>;
+				status = "okay";
+			};
+
+			csi2rx0_from_gc02m2: endpoint@1 {
+				reg = <1>;
+				remote-endpoint = <&gc02m2_to_csi2rx0>;
+				bus-type = <4>;      /* MIPI CSI-2 D-PHY */
+				clock-lanes = <0>;
+				data-lanes = <2 1>;
 				lane-polarities = <0 0 0>;
 				status = "okay";
 			};
@@ -591,7 +865,7 @@
 };
 
 &gmac0 {
-	status = "okay";
+	status = "disabled";
 	#address-cells = <1>;
 	#size-cells = <0>;
 	phy0: ethernet-phy@0 {
@@ -607,7 +881,7 @@
 &gmac1 {
 	#address-cells = <1>;
 	#size-cells = <0>;
-	status = "okay";
+	status = "disabled";
 	phy1: ethernet-phy@1 {
 		tx_delay_sel_fe = <5>;
 		tx_delay_sel = <0>;
@@ -625,23 +899,23 @@
 &pwmdac {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pwmdac0_pins>;
-	status = "okay";
+	status = "disabled";
 };
 
 &i2srx_3ch {
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2s_clk_pins &i2srx_pins>;
-	status = "disabled";
+	status = "okay";
 };
 
 &i2stx_4ch1 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2stx_pins>;
-	status = "disabled";
+	status = "okay";
 };
 
 &pwmdac_codec {
-	status = "okay";
+	status = "disabled";
 };
 
 &spi0 {
@@ -664,7 +938,7 @@
 		    <&pcie0_clkreq_default>;
 	pinctrl-1 = <&pcie0_perst_default>;
 	pinctrl-2 = <&pcie0_perst_active>;
-	status = "okay";
+	status = "disabled";
 };
 
 &pcie1 {
@@ -673,7 +947,7 @@
 		    <&pcie1_clkreq_default>;
 	pinctrl-1 = <&pcie1_perst_default>;
 	pinctrl-2 = <&pcie1_perst_active>;
-	status = "okay";
+	status = "disabled";
 };
 
 &mailbox_contrl0 {
@@ -806,21 +1080,25 @@
 };
 
 &usbdrd30 {
-	clocks = <&clkgen JH7110_USB_125M>,
-		 <&clkgen JH7110_USB0_CLK_APP_125>,
-		 <&clkgen JH7110_USB0_CLK_LPM>,
-		 <&clkgen JH7110_USB0_CLK_STB>,
-		 <&clkgen JH7110_USB0_CLK_USB_APB>,
-		 <&clkgen JH7110_USB0_CLK_AXI>,
-		 <&clkgen JH7110_USB0_CLK_UTMI_APB>;
-	clock-names = "125m","app","lpm","stb","apb","axi","utmi";
-	resets = <&rstgen RSTN_U0_CDN_USB_PWRUP>,
-		 <&rstgen RSTN_U0_CDN_USB_APB>,
-		 <&rstgen RSTN_U0_CDN_USB_AXI>,
-		 <&rstgen RSTN_U0_CDN_USB_UTMI_APB>;
-	reset-names = "pwrup","apb","axi","utmi";
-	starfive,usb2-only;
-	dr_mode = "peripheral"; /*host or peripheral*/
+	// clocks = <&clkgen JH7110_USB_125M>,
+	// 	 <&clkgen JH7110_USB0_CLK_APP_125>,
+	// 	 <&clkgen JH7110_USB0_CLK_LPM>,
+	// 	 <&clkgen JH7110_USB0_CLK_STB>,
+	// 	 <&clkgen JH7110_USB0_CLK_USB_APB>,
+	// 	 <&clkgen JH7110_USB0_CLK_AXI>,
+	// 	 <&clkgen JH7110_USB0_CLK_UTMI_APB>;
+	// clock-names = "125m","app","lpm","stb","apb","axi","utmi";
+	// resets = <&rstgen RSTN_U0_CDN_USB_PWRUP>,
+	// 	 <&rstgen RSTN_U0_CDN_USB_APB>,
+	// 	 <&rstgen RSTN_U0_CDN_USB_AXI>,
+	// 	 <&rstgen RSTN_U0_CDN_USB_UTMI_APB>;
+	// reset-names = "pwrup","apb","axi","utmi";
+	// starfive,usb2-only;
+	dr_mode = "host"; /*host or peripheral*/
+    pinctrl-names = "default";
+    pinctrl-0 = <&usb_pins>;
+
+	xhci-lowmem-pool;
 	status = "okay";
 };
 
@@ -831,5 +1109,5 @@
 &ptc {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pwm_pins>;
-	status = "okay";
+	status = "disabled";
 };

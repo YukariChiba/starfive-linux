@@ -749,9 +749,9 @@ static int cdns_dsi_mode2cfg(struct cdns_dsi *dsi,
 	//dpi to dsi transfer can not match , reconfig those parms for waveshare
 	//for taobao old mipi panel .should change here : hsa 36 , hbp 108, hfp 288
 	if (mode->vdisplay == 1280) {
-		dsi_cfg->hsa = 45-DSI_HSA_FRAME_OVERHEAD;
-		dsi_cfg->hbp = 134-DSI_HBP_FRAME_OVERHEAD;
-		dsi_cfg->hfp = 356-DSI_HFP_FRAME_OVERHEAD;
+		dsi_cfg->hsa = 66 - DSI_HSA_FRAME_OVERHEAD;
+		dsi_cfg->hbp = 64 - DSI_HBP_FRAME_OVERHEAD;
+		dsi_cfg->hfp = 57 - DSI_HFP_FRAME_OVERHEAD;
 	}
 	if (mode->vdisplay == 480) {
 		dsi_cfg->hsa = 117-DSI_HSA_FRAME_OVERHEAD;
@@ -841,7 +841,7 @@ static int cdns_dsi_check_conf(struct cdns_dsi *dsi,
 	if (mode->vdisplay == 480)
 		phy_cfg->hs_clk_rate = 750000000;
 	else if (mode->vdisplay == 1280)
-		phy_cfg->hs_clk_rate = 490000000;
+		phy_cfg->hs_clk_rate = 400000000;
 
 	dsi_cfg->htotal = dsi_cfg->hsa + DSI_HSA_FRAME_OVERHEAD +
 			  			dsi_cfg->hbp + DSI_HBP_FRAME_OVERHEAD +
