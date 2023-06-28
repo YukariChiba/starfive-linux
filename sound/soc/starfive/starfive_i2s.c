@@ -391,6 +391,7 @@ static int dw_i2s_set_fmt(struct snd_soc_dai *cpu_dai, unsigned int fmt)
 	struct dw_i2s_dev *dev = snd_soc_dai_get_drvdata(cpu_dai);
 	int ret = 0;
 
+	printk("%s:TTTT fmt=0x%x, capability=0x%x.\n\n",__func__, fmt, dev->capability);
 	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
 	case SND_SOC_DAIFMT_CBM_CFM:
 		if (dev->capability & DW_I2S_SLAVE)
@@ -409,7 +410,7 @@ static int dw_i2s_set_fmt(struct snd_soc_dai *cpu_dai, unsigned int fmt)
 		ret = -EINVAL;
 		break;
 	default:
-		dev_dbg(dev->dev, "dwc : Invalid master/slave format\n");
+		dev_err(dev->dev, "dwc : Invalid master/slave format\n");
 		ret = -EINVAL;
 		break;
 	}
