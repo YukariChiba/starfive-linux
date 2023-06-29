@@ -3050,6 +3050,8 @@ static int ov5640_probe(struct i2c_client *client)
 	u32 rotation;
 	int ret;
 
+	printk("ov5640_probe in linux/drivers/media/i2c/ov5640.c \n");
+
 	sensor = devm_kzalloc(dev, sizeof(*sensor), GFP_KERNEL);
 	if (!sensor)
 		return -ENOMEM;
