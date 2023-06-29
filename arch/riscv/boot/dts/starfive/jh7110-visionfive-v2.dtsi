@@ -809,7 +809,7 @@
 	// };
 
 	ov5640: camera@3c {
-		status = "okay";
+		status = "disabled";
 		compatible = "ovti,ov5640";
 		pinctrl-names = "default";
 		pinctrl-0 = <&ov5640_pins>;
@@ -834,7 +834,7 @@
 	};
 
 	gc02m2: gc02m2@37 {
-		status = "disabled";
+		status = "okay";
 		compatible = "galaxycore,gc02m2";
 		pinctrl-names = "default";
 		pinctrl-0 = <&gc02m2_pins>;
