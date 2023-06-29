@@ -1424,17 +1424,17 @@ static void sc89890h_charger_irq_workfunc(struct work_struct *work)
         sc->status &= ~SC89890H_STATUS_FAULT;
 
     charge_status = (status & SC89890H_CHRG_STAT_MASK) >> SC89890H_CHRG_STAT_SHIFT;
-    if (charge_status == SC89890H_CHRG_STAT_IDLE)
-        dev_info(sc->dev, "%s:not charging\n", __func__);
-    else if (charge_status == SC89890H_CHRG_STAT_PRECHG)
-        dev_info(sc->dev, "%s:precharging\n", __func__);
-    else if (charge_status == SC89890H_CHRG_STAT_FASTCHG)
-        dev_info(sc->dev, "%s:fast charging\n", __func__);
-    else if (charge_status == SC89890H_CHRG_STAT_CHGDONE)
-        dev_info(sc->dev, "%s:charge done!\n", __func__);
+    // if (charge_status == SC89890H_CHRG_STAT_IDLE)
+    //     dev_info(sc->dev, "%s:not charging\n", __func__);
+    // else if (charge_status == SC89890H_CHRG_STAT_PRECHG)
+    //     dev_info(sc->dev, "%s:precharging\n", __func__);
+    // else if (charge_status == SC89890H_CHRG_STAT_FASTCHG)
+    //     dev_info(sc->dev, "%s:fast charging\n", __func__);
+    // else if (charge_status == SC89890H_CHRG_STAT_CHGDONE)
+    //     dev_info(sc->dev, "%s:charge done!\n", __func__);
     
-    if (fault)
-        dev_info(sc->dev, "%s:charge fault:%02x\n", __func__,fault);
+    // if (fault)
+    //     dev_info(sc->dev, "%s:charge fault:%02x\n", __func__,fault);
 }
 
 
@@ -1555,7 +1555,7 @@ static void sc89890h_charger_shutdown(struct i2c_client *client)
     cancel_delayed_work_sync(&sc->check_pe_tuneup_work);
     cancel_delayed_work_sync(&sc->pe_volt_tune_work);
 
-    free_irq(sc->client->irq, NULL);
+    // free_irq(sc->client->irq, NULL);
 }
 
 static struct of_device_id sc89890h_charger_match_table[] = {
