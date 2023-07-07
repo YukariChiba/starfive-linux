@@ -375,29 +375,29 @@ static void inno_hdmi_set_pwr_mode(struct inno_hdmi *hdmi, int mode)
 			break;
 	mdelay(100);
 
-	dev_info(hdmi->dev, "%s hdmi->pre_cfg->pixclock = %lu\n",__func__, hdmi->pre_cfg->pixclock);
-	dev_info(hdmi->dev, "%s hdmi->pre_cfg->tmdsclock = %lu\n",__func__, hdmi->pre_cfg->tmdsclock);
-	dev_info(hdmi->dev, "%s hdmi->pre_cfg->prediv = %d\n",__func__, hdmi->pre_cfg->prediv);
-	dev_info(hdmi->dev, "%s hdmi->pre_cfg->fbdiv = %d\n",__func__, hdmi->pre_cfg->fbdiv);
-	dev_info(hdmi->dev, "%s hdmi->pre_cfg->tmds_div_a = %d\n",__func__, hdmi->pre_cfg->tmds_div_a);
-	dev_info(hdmi->dev, "%s hdmi->pre_cfg->tmds_div_b = %d\n",__func__, hdmi->pre_cfg->tmds_div_b);
-	dev_info(hdmi->dev, "%s hdmi->pre_cfg->tmds_div_c = %d\n",__func__, hdmi->pre_cfg->tmds_div_c);
-	dev_info(hdmi->dev, "%s hdmi->pre_cfg->pclk_div_a = %d\n",__func__, hdmi->pre_cfg->pclk_div_a);
-	dev_info(hdmi->dev, "%s hdmi->pre_cfg->pclk_div_b = %d\n",__func__, hdmi->pre_cfg->pclk_div_b);
-	dev_info(hdmi->dev, "%s hdmi->pre_cfg->pclk_div_c = %d\n",__func__, hdmi->pre_cfg->pclk_div_c);
-	dev_info(hdmi->dev, "%s hdmi->pre_cfg->pclk_div_d = %d\n",__func__, hdmi->pre_cfg->pclk_div_d);
-	dev_info(hdmi->dev, "%s hdmi->pre_cfg->vco_div_5_en = %d\n",__func__, hdmi->pre_cfg->vco_div_5_en);
-	dev_info(hdmi->dev, "%s hdmi->pre_cfg->fracdiv = %d\n",__func__, hdmi->pre_cfg->fracdiv);
+	// dev_info(hdmi->dev, "%s hdmi->pre_cfg->pixclock = %lu\n",__func__, hdmi->pre_cfg->pixclock);
+	// dev_info(hdmi->dev, "%s hdmi->pre_cfg->tmdsclock = %lu\n",__func__, hdmi->pre_cfg->tmdsclock);
+	// dev_info(hdmi->dev, "%s hdmi->pre_cfg->prediv = %d\n",__func__, hdmi->pre_cfg->prediv);
+	// dev_info(hdmi->dev, "%s hdmi->pre_cfg->fbdiv = %d\n",__func__, hdmi->pre_cfg->fbdiv);
+	// dev_info(hdmi->dev, "%s hdmi->pre_cfg->tmds_div_a = %d\n",__func__, hdmi->pre_cfg->tmds_div_a);
+	// dev_info(hdmi->dev, "%s hdmi->pre_cfg->tmds_div_b = %d\n",__func__, hdmi->pre_cfg->tmds_div_b);
+	// dev_info(hdmi->dev, "%s hdmi->pre_cfg->tmds_div_c = %d\n",__func__, hdmi->pre_cfg->tmds_div_c);
+	// dev_info(hdmi->dev, "%s hdmi->pre_cfg->pclk_div_a = %d\n",__func__, hdmi->pre_cfg->pclk_div_a);
+	// dev_info(hdmi->dev, "%s hdmi->pre_cfg->pclk_div_b = %d\n",__func__, hdmi->pre_cfg->pclk_div_b);
+	// dev_info(hdmi->dev, "%s hdmi->pre_cfg->pclk_div_c = %d\n",__func__, hdmi->pre_cfg->pclk_div_c);
+	// dev_info(hdmi->dev, "%s hdmi->pre_cfg->pclk_div_d = %d\n",__func__, hdmi->pre_cfg->pclk_div_d);
+	// dev_info(hdmi->dev, "%s hdmi->pre_cfg->vco_div_5_en = %d\n",__func__, hdmi->pre_cfg->vco_div_5_en);
+	// dev_info(hdmi->dev, "%s hdmi->pre_cfg->fracdiv = %d\n",__func__, hdmi->pre_cfg->fracdiv);
 
 
-	dev_info(hdmi->dev, "*******************************************************\n");
+	// dev_info(hdmi->dev, "*******************************************************\n");
 
-	dev_info(hdmi->dev, "%s hdmi->post_cfg->tmdsclock = %lu\n",__func__, hdmi->post_cfg->tmdsclock);
-	dev_info(hdmi->dev, "%s hdmi->post_cfg->prediv = %d\n",__func__, hdmi->post_cfg->prediv);
-	dev_info(hdmi->dev, "%s hdmi->post_cfg->fbdiv = %d\n",__func__, hdmi->post_cfg->fbdiv);
-	dev_info(hdmi->dev, "%s hdmi->post_cfg->postdiv = %d\n",__func__, hdmi->post_cfg->postdiv);
-	dev_info(hdmi->dev, "%s hdmi->post_cfg->post_div_en = %d\n",__func__, hdmi->post_cfg->post_div_en);
-	dev_info(hdmi->dev, "%s hdmi->post_cfg->version = %d\n",__func__, hdmi->post_cfg->version);
+	// dev_info(hdmi->dev, "%s hdmi->post_cfg->tmdsclock = %lu\n",__func__, hdmi->post_cfg->tmdsclock);
+	// dev_info(hdmi->dev, "%s hdmi->post_cfg->prediv = %d\n",__func__, hdmi->post_cfg->prediv);
+	// dev_info(hdmi->dev, "%s hdmi->post_cfg->fbdiv = %d\n",__func__, hdmi->post_cfg->fbdiv);
+	// dev_info(hdmi->dev, "%s hdmi->post_cfg->postdiv = %d\n",__func__, hdmi->post_cfg->postdiv);
+	// dev_info(hdmi->dev, "%s hdmi->post_cfg->post_div_en = %d\n",__func__, hdmi->post_cfg->post_div_en);
+	// dev_info(hdmi->dev, "%s hdmi->post_cfg->version = %d\n",__func__, hdmi->post_cfg->version);
 
 	inno_hdmi_config_pll(hdmi);
 	//inno_hdmi_tx_ctrl(hdmi);
