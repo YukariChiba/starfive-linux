@@ -57,10 +57,17 @@
 
 #define RTK_VERSION "1.2"
 
+#if 0
 #define RTKBT_DBG(fmt, arg...) printk(KERN_INFO "rtk_btcoex: " fmt "\n" , ## arg)
 #define RTKBT_INFO(fmt, arg...) printk(KERN_INFO "rtk_btcoex: " fmt "\n" , ## arg)
 #define RTKBT_WARN(fmt, arg...) printk(KERN_WARNING "rtk_btcoex: " fmt "\n", ## arg)
 #define RTKBT_ERR(fmt, arg...) printk(KERN_WARNING "rtk_btcoex: " fmt "\n", ## arg)
+#else
+#define RTKBT_DBG(fmt, arg...)
+#define RTKBT_INFO(fmt, arg...)
+#define RTKBT_WARN(fmt, arg...)
+#define RTKBT_ERR(fmt, arg...)
+#endif
 
 static struct rtl_coex_struct btrtl_coex;
 
