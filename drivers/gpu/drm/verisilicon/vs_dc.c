@@ -1366,7 +1366,8 @@ static irqreturn_t dc_isr(int irq, void *data)
 	struct vs_dc_info *dc_info = dc->hw.info;
 	u32 i, ret;
 
-	if(!dc_info)
+	// if(!dc_info)
+	if(!dc->init_count)
 	  return IRQ_HANDLED;
 
 	ret = dc_hw_get_interrupt(&dc->hw);
